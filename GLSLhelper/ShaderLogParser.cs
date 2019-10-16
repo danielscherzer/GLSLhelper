@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace GLSLhelper
 {
 	/// <summary>
-	/// 
+	/// Class that parses GLSL shader logs into lines with line numbers
 	/// </summary>
 	public class ShaderLogParser
 	{
@@ -15,6 +15,7 @@ namespace GLSLhelper
 		public ShaderLogParser(string log)
 		{
 			//parse error log
+			log = log.Replace("\r", string.Empty);
 			char[] splitChars = new char[] { '\n' };
 			var errorLines = new List<ShaderLogLine>();
 			var otherLines = new List<ShaderLogLine>();
