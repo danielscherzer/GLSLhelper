@@ -14,4 +14,8 @@
     <Description>Helper classes for parsing shaders and log files and for include support</Description>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Sprache" Version="2.2.0" />
+  </ItemGroup>
+
 </Project>

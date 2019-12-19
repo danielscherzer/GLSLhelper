@@ -1,4 +1,5 @@
-﻿using System;
+using System;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace GLSLhelper
@@ -16,6 +17,7 @@ namespace GLSLhelper
 		{
 			if (GetIncludeCode == null) throw new ArgumentNullException(nameof(GetIncludeCode));
 
+			shaderCode = RemoveComments(UnixLineEndings(shaderCode));
 			var lines = shaderCode.Split(new[] { '\n' }, StringSplitOptions.None); //if UNIX style line endings still working so do not use Envirnoment.NewLine
 			int lineNr = 1;
 			foreach (var line in lines)
@@ -26,7 +28,7 @@ namespace GLSLhelper
 					var sFullMatch = match.Value;
 					var includeName = match.Groups[1].ToString(); // get the include
 					var includeCode = GetIncludeCode(includeName);
-					var lineNumberCorrection = $"{Environment.NewLine}#line {lineNr}{Environment.NewLine}";
+					var lineNumberCorrection = $"\n#line {lineNr}\n";
 					shaderCode = shaderCode.Replace(sFullMatch, includeCode + lineNumberCorrection); // replace #include with actual include code
 				}
 				++lineNr;
@@ -34,9 +36,24 @@ namespace GLSLhelper
 			return shaderCode;
 		}
 
-		public static string RemoveBlockComments(string shaderCode)
+		public static string UnixLineEndings(string shaderCode) => shaderCode.Replace("\r\n", "\n");
+
+		public static string ReplaceBlockCommentsByEmptyLines(string shaderCode)
 		{
-			return Regex.Replace(shaderCode, RegexPatterns.BlockComment, string.Empty);
+			int CountLineEndings(string text) => text.Count(c => c == '\n');
+			while(true)
+			{
+				var match = Regex.Match(shaderCode, RegexPatterns.BlockComment);
+				if (match.Success)
+				{
+					shaderCode = shaderCode.Replace(match.Value, new string('\n', CountLineEndings(match.Value)));
+				}
+				else
+				{
+					break;
+				}
+			}
+			return shaderCode;
 		}
 
 		public static string RemoveLineComments(string shaderCode)
@@ -47,7 +64,7 @@ namespace GLSLhelper
 
 		public static string RemoveComments(string shaderCode)
 		{
-			return RemoveLineComments(RemoveBlockComments(shaderCode));
+			return RemoveLineComments(ReplaceBlockCommentsByEmptyLines(shaderCode));
 		}
 	}
 }
