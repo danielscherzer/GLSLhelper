@@ -30,12 +30,12 @@ namespace GLSLhelper
 		/// <summary>
 		/// The file number
 		/// </summary>
-		public int FileNumber = -1;
+		public int? FileNumber = null;
 		
 		/// <summary>
 		/// The line number
 		/// </summary>
-		public int LineNumber = -1;
+		public int? LineNumber = null;
 		
 		/// <summary>
 		/// The message
@@ -51,14 +51,14 @@ namespace GLSLhelper
 		public override string ToString()
 		{
 			StringBuilder sb = new StringBuilder();
-			if (string.Empty != Type)
+			if (!string.IsNullOrEmpty(Type))
 			{
 				sb.Append(Type + ": ");
 			}
-			if (-1 != LineNumber)
+			if (LineNumber.HasValue)
 			{
 				sb.Append("Line ");
-				sb.Append(LineNumber.ToString());
+				sb.Append(LineNumber);
 				sb.Append(" : ");
 			}
 			sb.Append(Message);

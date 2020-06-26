@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace GLSLhelper
 {
@@ -16,19 +17,23 @@ namespace GLSLhelper
 		{
 			//parse error log
 			log = log.Replace("\r", string.Empty);
-			char[] splitChars = new char[] { '\n' };
+			var lines = log.Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
 			var errorLines = new List<ShaderLogLine>();
 			var otherLines = new List<ShaderLogLine>();
-			foreach (var line in log.Split(splitChars, StringSplitOptions.RemoveEmptyEntries))
+			foreach (var line in lines)
 			{
-				ShaderLogLine logLine;
-				try
+				var logLine = ParseLogLineNVIDIA(line);
+				if(logLine is null)
 				{
-					logLine = ParseLogLineNVIDIA(line);
-				}
-				catch
-				{
-					logLine = ParseLogLine(line);
+					logLine = ParseGlslc(line);
+					if (logLine is null)
+					{
+						logLine = ParseOthersLogLine(line);
+					}
+					if (logLine is null)
+					{
+						logLine = new ShaderLogLine { Message = $"Could not parse line '{line}'" };
+					}
 				}
 				if (logLine.Type.StartsWith(ShaderLogLine.WellKnownTypeError))
 				{
@@ -38,10 +43,11 @@ namespace GLSLhelper
 				{
 					otherLines.Add(logLine);
 				}
+
 			}
 			//first error messages, then all others
-			lines = errorLines;
-			lines.AddRange(otherLines);
+			this.lines = errorLines;
+			this.lines.AddRange(otherLines);
 		}
 
 		/// <summary>
@@ -50,7 +56,59 @@ namespace GLSLhelper
 		/// <value>
 		/// The lines.
 		/// </value>
-		public IEnumerable<ShaderLogLine> Lines { get { return lines; } }
+		public IEnumerable<ShaderLogLine> Lines => lines;
+
+		/// <summary>
+		/// The lines
+		/// </summary>
+		private readonly List<ShaderLogLine> lines = new List<ShaderLogLine>();
+
+		//filename(10): error C0000: syntax error, unexpected '[', expecting \"::\" at token \"[\"
+		private static readonly Regex nvidiaLine = new Regex(@"(.+)\((\d+)\):\s(\w+)(.+)");
+		
+		/// <summary>
+		/// Parses the log line NVIDIA.
+		/// </summary>
+		/// <param name="line">The line.</param>
+		/// <returns></returns>
+		/// <exception cref="ArgumentException"></exception>
+		private static ShaderLogLine ParseLogLineNVIDIA(string line)
+		{
+			var match = nvidiaLine.Match(line);
+			if(match.Success && 5 == match.Groups.Count)
+			{
+				if (!int.TryParse(match.Groups[2].Value, out int lineNumber)) return null;
+				return new ShaderLogLine
+				{ 
+					LineNumber = lineNumber,
+					Type = ParseType(match.Groups[3].Value),
+					Message = match.Groups[4].Value,
+				};
+			}
+			return null;
+		}
+
+		//C:\work\IrrlichtBAW\branch\examples_tests\42.EnvmapLookup\envCubeMapShaders\envmap.frag:442: error: '=' :  cannot convert from ' const float' to ' temp highp uint'
+		private static readonly Regex glslcLine = new Regex(@".+:(\d+):\s(\w+):(.+)");
+
+		private static ShaderLogLine ParseGlslc(string line)
+		{
+			var match = glslcLine.Match(line);
+			if (match.Success && 4 == match.Groups.Count)
+			{
+				if (!int.TryParse(match.Groups[1].Value, out int lineNumber)) return null;
+				return new ShaderLogLine
+				{
+					LineNumber = lineNumber,
+					Type = ParseType(match.Groups[2].Value),
+					Message = match.Groups[3].Value,
+				};
+			}
+			return null;
+		}
+
+		//ERROR: 0:9: '' :  syntax error, unexpected IDENTIFIER, expecting COMMA or SEMICOLON
+		private static readonly Regex othersLine = new Regex(@"(\w+):\s*(\d+):\s*(\d+):(.+)");
 
 		/// <summary>
 		/// Parses the log line.
@@ -58,97 +116,22 @@ namespace GLSLhelper
 		/// <param name="line">The line.</param>
 		/// <returns></returns>
 		/// <exception cref="ArgumentException"></exception>
-		private ShaderLogLine ParseLogLine(string line)
+		private static ShaderLogLine ParseOthersLogLine(string line)
 		{
-			ShaderLogLine logLine = new ShaderLogLine();
-			char[] splitChars = new char[] { ':' };
-			var elements = line.Split(splitChars, 4);
-			switch(elements.Length)
+			var match = othersLine.Match(line);
+			if (match.Success && 5 == match.Groups.Count)
 			{
-				case 4:
-					logLine.Type = ParseType(elements[0]);
-					logLine.FileNumber = Parse(elements[1]);
-					logLine.LineNumber = Parse(elements[2]);
-					logLine.Message = elements[3];
-					break;
-				case 3:
-					logLine.Type = ParseType(elements[0]);
-					logLine.Message = elements[1] + ":" + elements[2];
-					break;
-				case 2:
-					logLine.Type = ParseType(elements[0]);
-					logLine.Message = elements[1];
-					break;
-				case 1:
-					logLine.Message = elements[0];
-					break;
-				default:
-					throw new ArgumentException(line);
+				if (!int.TryParse(match.Groups[2].Value, out int fileNumber)) return null;
+				if (!int.TryParse(match.Groups[3].Value, out int lineNumber)) return null;
+				return new ShaderLogLine
+				{
+					FileNumber = fileNumber,
+					LineNumber = lineNumber,
+					Type = ParseType(match.Groups[1].Value),
+					Message = match.Groups[4].Value,
+				};
 			}
-			logLine.Message = logLine.Message.Trim();
-			return logLine;
-		}
-
-		/// <summary>
-		/// Parses the log line NVIDIA.
-		/// </summary>
-		/// <param name="line">The line.</param>
-		/// <returns></returns>
-		/// <exception cref="ArgumentException"></exception>
-		private ShaderLogLine ParseLogLineNVIDIA(string line)
-		{
-			ShaderLogLine logLine = new ShaderLogLine();
-			char[] splitChars = new char[] { ':' };
-			var elements = line.Split(splitChars, 3);
-			switch (elements.Length)
-			{
-				case 3:
-					logLine.FileNumber = ParseNVFileNumber(elements[0]);
-					logLine.LineNumber = ParseNVLineNumber(elements[0]);
-					logLine.Type = ParseNVType(elements[1]);
-					logLine.Message = elements[1] + ":" + elements[2];
-					break;
-				default:
-					throw new ArgumentException(line);
-			}
-			logLine.Message = logLine.Message.Trim();
-			return logLine;
-		}
-
-		/// <summary>
-		/// Parses the type of NIVIDA.
-		/// </summary>
-		/// <param name="v">The v.</param>
-		/// <returns></returns>
-		private string ParseNVType(string v)
-		{
-			char[] splitChars = new char[] { ' ', '\t' };
-			var elements = v.Split(splitChars, StringSplitOptions.RemoveEmptyEntries);
-			return ParseType(elements[0]);
-		}
-
-		/// <summary>
-		/// Parses NVIDIA line number.
-		/// </summary>
-		/// <param name="v">The v.</param>
-		/// <returns></returns>
-		private int ParseNVLineNumber(string v)
-		{
-			char[] splitChars = new char[] { '(',')', ' ', '\t' };
-			var elements = v.Split(splitChars, StringSplitOptions.RemoveEmptyEntries);
-			return Parse(elements[1]);
-		}
-
-		/// <summary>
-		/// Parses the NVIDIA file number.
-		/// </summary>
-		/// <param name="v">The v.</param>
-		/// <returns></returns>
-		private int ParseNVFileNumber(string v)
-		{
-			char[] splitChars = new char[] { '(', ')', ' ', '\t' };
-			var elements = v.Split(splitChars, StringSplitOptions.RemoveEmptyEntries);
-			return Parse(elements[0]);
+			return null;
 		}
 
 		/// <summary>
@@ -156,31 +139,6 @@ namespace GLSLhelper
 		/// </summary>
 		/// <param name="typeString">The type string.</param>
 		/// <returns></returns>
-		private string ParseType(string typeString)
-		{
-			return typeString.ToUpperInvariant().Trim();
-		}
-
-		/// <summary>
-		/// Parses the specified number.
-		/// </summary>
-		/// <param name="number">The number.</param>
-		/// <returns></returns>
-		private int Parse(string number)
-		{
-			if (int.TryParse(number, out int output))
-			{
-				return output;
-			}
-			else
-			{
-				return -1;
-			}
-		}
-
-		/// <summary>
-		/// The lines
-		/// </summary>
-		private List<ShaderLogLine> lines = new List<ShaderLogLine>();
+		private static string ParseType(string typeString) => typeString.ToUpperInvariant().Trim();
 	}
 }

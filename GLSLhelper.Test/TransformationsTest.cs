@@ -5,49 +5,28 @@ namespace GLSLhelper.Test
 	[TestClass]
 	public class TransformationsTest
 	{
-		[TestMethod]
-		public void RemoveLineComments()
+		[DataTestMethod]
+		[DataRow("// a test//", "")]
+		[DataRow("// a test\nsomething\n// comment ", "\nsomething\n")]
+		public void RemoveLineComments(string input, string expectedOutput)
 		{
-			var input = @"// a test//";
-			var expectedOutput = string.Empty;
 			var actual = Transformations.RemoveLineComments(input);
 			Assert.AreEqual(expectedOutput, actual);
 		}
 
-		[TestMethod]
-		public void RemoveLineCommentsMultiple()
+		[DataTestMethod]
+		[DataRow("/*test2;test3;*/", "")]
+		[DataRow("/*test2;\ntest3;*/", "\n")]
+		public void RemoveBlockComments(string input, string expectedOutput)
 		{
-			var input = Transformations.UnixLineEndings(@"// a test
-something
-// comment ");
-			var expectedOutput = Transformations.UnixLineEndings("\nsomething\n");
-			var actual = Transformations.RemoveLineComments(input);
-			Assert.AreEqual(expectedOutput, actual);
-		}
-
-		[TestMethod]
-		public void RemoveBlockComments()
-		{
-			var input = "/*test2;test3;*/";
-			var expectedOutput = string.Empty;
 			var actual = Transformations.ReplaceBlockCommentsByEmptyLines(input);
 			Assert.AreEqual(expectedOutput, actual);
 		}
 
-		[TestMethod]
-		public void RemoveBlockCommentsMultiLine()
+		[DataTestMethod]
+		[DataRow("// an test\n/*test2;\ntest3;\n*/\n", "\n\n\n\n")]
+		public void RemoveComments(string input, string expectedOutput)
 		{
-			var input = "/*test2;\ntest3;*/";
-			var expectedOutput = "\n";
-			var actual = Transformations.ReplaceBlockCommentsByEmptyLines(input);
-			Assert.AreEqual(expectedOutput, actual);
-		}
-
-		[TestMethod]
-		public void RemoveComments()
-		{
-			var input = "// an test\n/*test2;\ntest3;\n*/\n";
-			var expectedOutput = "\n\n\n\n";
 			var actual = Transformations.RemoveComments(input);
 			Assert.AreEqual(expectedOutput, actual);
 		}
