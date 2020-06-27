@@ -23,7 +23,8 @@ namespace GLSLhelper
 			foreach (var line in lines)
 			{
 				// Search for include pattern (e.g. #include raycast.glsl) (nested not supported)
-				foreach (Match match in Regex.Matches(line, RegexPatterns.Include, RegexOptions.Singleline))
+				var match = RegexPatterns.Include.Match(line);
+				if(match.Success)
 				{
 					var sFullMatch = match.Value;
 					var includeName = match.Groups[1].ToString(); // get the include
@@ -43,7 +44,7 @@ namespace GLSLhelper
 			int CountLineEndings(string text) => text.Count(c => c == '\n');
 			while(true)
 			{
-				var match = Regex.Match(shaderCode, RegexPatterns.BlockComment);
+				var match = RegexPatterns.BlockComment.Match(shaderCode);
 				if (match.Success)
 				{
 					shaderCode = shaderCode.Replace(match.Value, new string('\n', CountLineEndings(match.Value)));

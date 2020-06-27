@@ -7,7 +7,7 @@ namespace GLSLhelper
 	{
 		public static IEnumerable<(string type, string name)> ParseUniforms(string uncommentedShaderCode)
 		{
-			foreach (Match match in Regex.Matches(uncommentedShaderCode, RegexPatterns.Uniform))
+			foreach (Match match in RegexPatterns.Uniform.Matches(uncommentedShaderCode))
 			{
 				var type = match.Groups[1].ToString();
 				var name = match.Groups[2].ToString();
