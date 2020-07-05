@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Version>0.2.0</Version>
+    <Version>0.3.0</Version>
     <Authors>Daniel Scherzer</Authors>
     <Product>Daniel Scherzer</Product>
     <Copyright>Copyright © 2019 Daniel Scherzer</Copyright>
@@ -15,7 +15,19 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Sprache" Version="2.2.0" />
+    <PackageReference Include="Sprache" Version="2.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="GlslSpecificationGenerated.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>GlslSpecificationGenerated.cs</LastGenOutput>
+    </None>
+    <Compile Update="GlslSpecificationGenerated.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>GlslSpecificationGenerated.tt</DependentUpon>
+    </Compile>
   </ItemGroup>
 
 </Project>
