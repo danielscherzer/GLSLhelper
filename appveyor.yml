@@ -1,4 +1,4 @@
-version: 0.2.{build}
+version: 0.3.{build}
 
 # enable patching of dot net core/standard *.csproj files with APPVEYOR version
 dotnet_csproj:
@@ -22,6 +22,7 @@ build:
   publish_nuget: true             # package projects with .nuspec files and push to artifacts
   publish_nuget_symbols: false     # generate and publish NuGet symbol packages
   include_nuget_references: false  # add -IncludeReferencedProjects option while packaging NuGet artifacts
+  verbosity: minimal              # MSBuild verbosity level
 
 deploy:
 - provider: NuGet
