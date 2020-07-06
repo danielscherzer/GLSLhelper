@@ -32,7 +32,7 @@ namespace GLSLhelper
 					}
 					if (logLine is null)
 					{
-						logLine = new ShaderLogLine { Message = $"Could not parse line '{line}'" };
+						logLine = new ShaderLogLine { Message = $"Could not parse line '{line}'", Type = ShaderLogLine.WellKnownTypeInfo };
 					}
 				}
 				if (logLine.Type.StartsWith(ShaderLogLine.WellKnownTypeError))

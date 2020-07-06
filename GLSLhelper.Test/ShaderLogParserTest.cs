@@ -79,6 +79,17 @@ ERROR: 3 compilation errors.  No code generated.
 		[TestMethod]
 		public void GlslcParsing()
 		{
+			var input = @".\shader.vert:3: error: 'non-opaque uniforms outside a block' : not allowed when using GLSL for Vulkan
+1 error generated.";
+			var parser = new ShaderLogParser(input);
+			Assert.AreEqual(2, parser.Lines.Count());
+			Assert.AreEqual(3, parser.Lines.First().LineNumber);
+			Assert.AreEqual(ShaderLogLine.WellKnownTypeError, parser.Lines.First().Type);
+		}
+
+		[TestMethod]
+		public void GlslcParsing2()
+		{
 			var input = @"
 C:\work\IrrlichtBAW\branch\examples_tests\42.EnvmapLookup\envCubeMapShaders\envmap.frag:441: error: 'texelFetch' : no matching overloaded function found
 C:\work\IrrlichtBAW\branch\examples_tests\42.EnvmapLookup\envCubeMapShaders\envmap.frag:442: error: '=' :  cannot convert from ' const float' to ' temp highp uint'
@@ -91,7 +102,7 @@ C:\work\IrrlichtBAW\branch\examples_tests\42.EnvmapLookup\envCubeMapShaders\envm
 		}
 
 		[TestMethod]
-		public void GlslcParsing2()
+		public void GlslcParsing3()
 		{
 			var input = @"C:\work\IrrlichtBAW\branch\examples_tests\42.EnvmapLookup\envCubeMapShaders\envmap.frag:356: error: 'NdotV' : no such field in structure\n
 C:\work\IrrlichtBAW\branch\examples_tests\42.EnvmapLookup\envCubeMapShaders\envmap.frag:356: error: '*' :  wrong operand types: no operation '*' exists that takes a left-hand operand of type ' temp structure{ global structure{ global structure{ global highp 3-component vector of float dir,  global highp 2X3 matrix of float dPosdScreen} V,  global highp 3-component vector of float N,  global highp float NdotV,  global highp float NdotV_squared} isotropic,  global highp 3-component vector of float T,  global highp 3-component vector of float B,  global highp float TdotV,  global highp float BdotV}' and a right operand of type ' temp structure{ global structure{ global structure{ global highp 3-component vector of float dir,  global highp 2X3 matrix of float dPosdScreen} V,  global highp 3-component vector of float N,  global highp float NdotV,  global highp float NdotV_squared} isotropic,  global highp 3-component vector of float T,  global highp 3-component vector of float B,  global highp float TdotV,  global highp float BdotV}' (or there is no acceptable conversion)\n
