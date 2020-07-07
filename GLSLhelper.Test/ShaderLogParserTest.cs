@@ -26,7 +26,7 @@ ERROR: 1 compilation errors.  No code generated.
 			var parser = new ShaderLogParser(input);
 			Assert.AreEqual(2, parser.Lines.Count());
 			Assert.AreEqual(9, parser.Lines.First().LineNumber);
-			Assert.AreEqual(ShaderLogLine.WellKnownTypeInfo, parser.Lines.Last().Type);
+			Assert.AreEqual(MessageType.Message, parser.Lines.Last().Type);
 		}
 
 
@@ -74,8 +74,8 @@ ERROR: 3 compilation errors.  No code generated.
 			Assert.AreEqual(9, parser.Lines.ElementAt(1).LineNumber);
 			Assert.AreEqual(9, parser.Lines.ElementAt(2).LineNumber);
 			Assert.AreEqual(9, parser.Lines.ElementAt(3).LineNumber);
-			Assert.AreEqual(ShaderLogLine.WellKnownTypeError, parser.Lines.ElementAt(3).Type);
-			Assert.AreEqual(ShaderLogLine.WellKnownTypeInfo, parser.Lines.Last().Type);
+			Assert.AreEqual(MessageType.Error, parser.Lines.ElementAt(3).Type);
+			Assert.AreEqual(MessageType.Message, parser.Lines.Last().Type);
 		}
 
 		[TestMethod]
@@ -86,8 +86,8 @@ ERROR: 3 compilation errors.  No code generated.
 			var parser = new ShaderLogParser(input);
 			Assert.AreEqual(2, parser.Lines.Count());
 			Assert.AreEqual(3, parser.Lines.First().LineNumber);
-			Assert.AreEqual(ShaderLogLine.WellKnownTypeError, parser.Lines.First().Type);
-			Assert.AreEqual(ShaderLogLine.WellKnownTypeInfo, parser.Lines.Last().Type);
+			Assert.AreEqual(MessageType.Error, parser.Lines.First().Type);
+			Assert.AreEqual(MessageType.Message, parser.Lines.Last().Type);
 		}
 
 		[TestMethod]
@@ -101,8 +101,8 @@ C:\work\IrrlichtBAW\branch\examples_tests\42.EnvmapLookup\envCubeMapShaders\envm
 			Assert.AreEqual(3, parser.Lines.Count());
 			Assert.AreEqual(441, parser.Lines.First().LineNumber);
 			Assert.AreEqual(442, parser.Lines.ElementAt(1).LineNumber);
-			Assert.AreEqual(ShaderLogLine.WellKnownTypeError, parser.Lines.ElementAt(1).Type);
-			Assert.AreEqual(ShaderLogLine.WellKnownTypeInfo, parser.Lines.Last().Type);
+			Assert.AreEqual(MessageType.Error, parser.Lines.ElementAt(1).Type);
+			Assert.AreEqual(MessageType.Message, parser.Lines.Last().Type);
 		}
 
 		[TestMethod]
@@ -116,7 +116,7 @@ C:\work\IrrlichtBAW\branch\examples_tests\42.EnvmapLookup\envCubeMapShaders\envm
 			Assert.AreEqual(356, parser.Lines.First().LineNumber);
 			Assert.AreEqual(356, parser.Lines.ElementAt(1).LineNumber);
 			Assert.AreEqual(356, parser.Lines.ElementAt(2).LineNumber);
-			Assert.AreEqual(ShaderLogLine.WellKnownTypeError, parser.Lines.ElementAt(1).Type);
+			Assert.AreEqual(MessageType.Error, parser.Lines.ElementAt(1).Type);
 		}
 	}
 }

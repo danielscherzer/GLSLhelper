@@ -32,10 +32,10 @@ namespace GLSLhelper
 					}
 					if (logLine is null)
 					{
-						logLine = new ShaderLogLine { Message = $"Could not parse line '{line}'", Type = ShaderLogLine.WellKnownTypeInfo };
+						logLine = new ShaderLogLine { Message = $"Could not parse line '{line}'" };
 					}
 				}
-				if (logLine.Type.StartsWith(ShaderLogLine.WellKnownTypeError))
+				if (MessageType.Error == logLine.Type)
 				{
 					errorLines.Add(logLine);
 				}
@@ -139,6 +139,18 @@ namespace GLSLhelper
 		/// </summary>
 		/// <param name="typeString">The type string.</param>
 		/// <returns></returns>
-		private static string ParseType(string typeString) => typeString.ToUpperInvariant().Trim();
+		private static MessageType ParseType(string typeString)
+		{
+			if(0 == typeString.Length) return MessageType.Message;
+			typeString = char.ToUpper(typeString[0]) + typeString.Substring(1).ToLowerInvariant().Trim();
+			if(Enum.TryParse<MessageType>(typeString, out var value))
+			{
+				return value;
+			}
+			else
+			{
+				return MessageType.Message;
+			}
+		}
 	}
 }
