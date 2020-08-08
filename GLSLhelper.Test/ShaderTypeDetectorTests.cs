@@ -7,6 +7,7 @@ namespace GLSLhelper.Tests
 	public class ShaderTypeDetectorTests
 	{
 		[DataTestMethod()]
+		[DataRow("void main() { }", ShaderType.Fragment)]
 		[DataRow("void main() { gl_FragColor = vec4(1.0); }", ShaderType.Fragment)]
 		[DataRow("out vec4 fragColor; void main() { fragColor = vec4(1.0f); }", ShaderType.Fragment)]
 		[DataRow("layout(early_fragment_tests) in; out vec4 fragColor; void main() { fragColor = vec4(1.0f); }", ShaderType.Fragment)]
@@ -18,7 +19,7 @@ namespace GLSLhelper.Tests
 		[DataRow("layout (local_size_x = 16, local_size_y = 16) in; void main() { }", ShaderType.Compute)]
 		public void AutoDetectShaderContentTypeTest(string sourceCode, ShaderType expectedResult)
 		{
-			var result = AutoDetectShaderContentType(sourceCode);
+			var result = AutoDetectFromCode(sourceCode);
 			Assert.AreEqual(expectedResult, result);
 		}
 	}
