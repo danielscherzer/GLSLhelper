@@ -20,7 +20,7 @@ namespace GLSLhelper
 		//												from w in Parse.WhiteSpace.Optional()
 		//												from op in Parse.Char('(')
 		//												select i;
-		static readonly Parser<char> ParserOperator = Parse.Chars(".;,+-*/()[]{}<>=&$!\"%?:|^");
+		static readonly Parser<char> ParserOperator = Parse.Chars(GlslSpecification.Operators);
 		private readonly Parser<IEnumerable<Token>> tokenParser;
 
 		public GlslTokenizer()

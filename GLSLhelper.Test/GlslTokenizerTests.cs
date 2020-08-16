@@ -40,9 +40,12 @@ namespace GLSLhelper.Tests
 			yield return new object[] { "1", TokenType.Number };
 			yield return new object[] { ".1", TokenType.Number };
 			yield return new object[] { "1.", TokenType.Number };
-			yield return new object[] { "*", TokenType.Operator };
 			yield return new object[] { "# pre processor stuff", TokenType.Preprocessor };
 			yield return new object[] { "gl_FragCoord", TokenType.Variable };
+			foreach(var op in GlslSpecification.Operators)
+			{
+				yield return new object[] { op.ToString(), TokenType.Operator };
+			}
 		}
 
 		private static IEnumerable<object[]> GetTokensData()
