@@ -1,4 +1,5 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace GLSLhelper.Test
@@ -14,60 +15,55 @@ namespace GLSLhelper.Test
 			Assert.IsTrue(parser.Lines.Count() == 0);
 		}
 
-		[TestMethod]
-		public void Parse2Errors()
+		const string shaderFileName1 = @"D:\C#\02 - Content\shader.vert";
+		[DataTestMethod()]
+		[DataRow("\nERROR: 0:9: '' :  syntax error, unexpected IDENTIFIER, expecting COMMA or SEMICOLON", 9, MessageType.Error, "0")]
+		[DataRow("\nWARNING: 0:0987: '' :  syntax error, unexpected IDENTIFIER, expecting COMMA or SEMICOLON", 987, MessageType.Warning, "0")]
+
+		[DataRow(shaderFileName1 + "(3): warning C0000: syntax error, unexpected identifier, expecting", 3, MessageType.Warning, shaderFileName1)]
+		[DataRow(shaderFileName1 + "(3): error C0000: syntax error, unexpected identifier, expecting", 3, MessageType.Error, shaderFileName1)]
+		[DataRow(shaderFileName1 + @"(1023): error C1503: undefined variable ""pos""", 1023, MessageType.Error, shaderFileName1)]
+
+		[DataRow(shaderFileName1 + ":3: error: 'non-opaque uniforms outside a block' : not allowed when using GLSL for Vulkan", 3, MessageType.Error, shaderFileName1)]
+		[DataRow(shaderFileName1 + ":356: Error: 'NdotV' : no such field in structure", 356, MessageType.Error, shaderFileName1)]
+		[DataRow("\n" + shaderFileName1 + ":356: error: '*' :  wrong operand types: no operation '*' exists that takes a left-hand operand of type ' temp structure{ global structure{ global structure{ global highp 3-component vector of float dir,  global highp 2X3 matrix of float dPosdScreen} V,  global highp 3-component vector of float N,  global highp float NdotV,  global highp float NdotV_squared} isotropic,  global highp 3-component vector of float T,  global highp 3-component vector of float B,  global highp float TdotV,  global highp float BdotV}' and a right operand of type ' temp structure{ global structure{ global structure{ global highp 3-component vector of float dir,  global highp 2X3 matrix of float dPosdScreen} V,  global highp 3-component vector of float N,  global highp float NdotV,  global highp float NdotV_squared} isotropic,  global highp 3-component vector of float T,  global highp 3-component vector of float B,  global highp float TdotV,  global highp float BdotV}' (or there is no acceptable conversion)\n", 356, MessageType.Error, shaderFileName1)]
+		[DataRow(shaderFileName1 + ":356: error: error: 'assign' :  cannot convert from ' temp structure{ global structure{ global structure{ global highp 3-component vector of float dir,  global highp 2X3 matrix of float dPosdScreen} V,  global highp 3-component vector of float N,  global highp float NdotV,  global highp float NdotV_squared} isotropic,  global highp 3-component vector of float T,  global highp 3-component vector of float B,  global highp float TdotV,  global highp float BdotV}' to ' global highp float'", 356, MessageType.Error, shaderFileName1)]
+
+		[DataRow(@"WARNING:" + shaderFileName1 + ":5: 'assign' :  cannot convert from ' const 3-component vector of float'", 5, MessageType.Warning, shaderFileName1)]
+		[DataRow(@"ERROR:" + shaderFileName1 + ":5: 'assign' :  cannot convert from ' const 3-component vector of float'", 5, MessageType.Error, shaderFileName1)]
+		[DataRow(@"ERROR:" + shaderFileName1 + ":0345: 'assign' :  cannot convert from ' const 3-component vector of float'", 345, MessageType.Error, shaderFileName1)]
+		public void ParseFirstOutputLine(string input, int lineNumber, MessageType type, string fileId)
 		{
-			var input = @"
-ERROR: 0:9: '' :  syntax error, unexpected IDENTIFIER, expecting COMMA or SEMICOLON
-ERROR: 1 compilation errors.  No code generated.
-
-
-";
-			var parser = new ShaderLogParser(input);
-			Assert.AreEqual(2, parser.Lines.Count());
-			Assert.AreEqual(9, parser.Lines.First().LineNumber);
-			Assert.AreEqual(MessageType.Message, parser.Lines.Last().Type);
-		}
-
-
-		[TestMethod]
-		public void ParseNvError()
-		{
-			var input = "D:\\Daten\\C#\\Zenseless\\examples\\ACG\\02 - ShaderDebugDialogExample\\Content\\shader.vert(10): error C0000: syntax error, unexpected '[', expecting \"::\" at token \"[\"";
 			var parser = new ShaderLogParser(input);
 			Assert.AreEqual(1, parser.Lines.Count());
-			Assert.AreEqual(10, parser.Lines.First().LineNumber);
+			var line = parser.Lines.First();
+			Assert.AreEqual(lineNumber, line.LineNumber);
+			Assert.AreEqual(type, line.Type);
+			Assert.AreEqual(fileId, line.FileId);
 		}
 
-		[TestMethod]
-		public void ParseNvErrors()
+		private static IEnumerable<object[]> GetParseTypesData()
 		{
-			var input = @"D:\Daten\C#\Zenseless\examples\ACG\02 - ShaderDebugDialogExample\Content\shader.vert(3): error C0000: syntax error, unexpected identifier, expecting '{' at token ""c3""\n
-D:\Daten\C#\Zenseless\examples\ACG\02 - ShaderDebugDialogExample\Content\shader.vert(10): error C1503: undefined variable ""pos""\n
-D:\Daten\C#\Zenseless\examples\ACG\02 - ShaderDebugDialogExample\Content\shader.vert(11): error C1503: undefined variable ""pos""";
+			yield return new object[] { "\nERROR: 0:9: '' :  syntax error\nERROR: 1 compilation errors.  No code generated.", new MessageType[] { MessageType.Error, MessageType.Message } };
+			yield return new object[] { "./shader.vert:3: error: 'non-opaque' : not allowed\n1 error generated.", new MessageType[] { MessageType.Error, MessageType.Message } };
+		}
+
+		[DataTestMethod()]
+		[DynamicData(nameof(GetParseTypesData), DynamicDataSourceType.Method)]
+		public void ParseTypes(string input, MessageType[] types)
+		{
 			var parser = new ShaderLogParser(input);
-			Assert.AreEqual(3, parser.Lines.Count());
-			Assert.AreEqual(3, parser.Lines.First().LineNumber);
-			Assert.AreEqual(10, parser.Lines.ElementAt(1).LineNumber);
-			Assert.AreEqual(11, parser.Lines.ElementAt(2).LineNumber);
+			Assert.AreEqual(types.Length, parser.Lines.Count());
+			for (int i = 0; i < types.Length; ++i)
+			{
+				Assert.AreEqual(types[i], parser.Lines.ElementAt(i).Type);
+			}
 		}
 
 		[TestMethod]
 		public void Parse6Errors()
 		{
-			var input = @"
-ERROR: 0:9: '' :  syntax error, unexpected IDENTIFIER, expecting COMMA or SEMICOLON
-ERROR: 1 compilation errors.  No code generated.
-
-
-
-ERROR: 0:9: 'dist' : undeclared identifier 
-ERROR: 0:9: 'dist' : redefinition 
-ERROR: 0:9: '' : compilation terminated 
-ERROR: 3 compilation errors.  No code generated.
-
-
-";
+			var input = "\nERROR: 0:9: '' :  syntax error, unexpected IDENTIFIER, expecting COMMA or SEMICOLON\nERROR: 1 compilation errors.  No code generated.\n\n\nERROR: 0:9: 'dist' : undeclared identifier\nERROR: 0:9: 'dist' : redefinition\nERROR: 0:9: '' : compilation terminated\nERROR: 3 compilation errors.  No code generated.\n\n";
 			var parser = new ShaderLogParser(input);
 			Assert.AreEqual(6, parser.Lines.Count());
 			Assert.AreEqual(9, parser.Lines.First().LineNumber);
@@ -76,47 +72,6 @@ ERROR: 3 compilation errors.  No code generated.
 			Assert.AreEqual(9, parser.Lines.ElementAt(3).LineNumber);
 			Assert.AreEqual(MessageType.Error, parser.Lines.ElementAt(3).Type);
 			Assert.AreEqual(MessageType.Message, parser.Lines.Last().Type);
-		}
-
-		[TestMethod]
-		public void GlslcParsing()
-		{
-			var input = @".\shader.vert:3: error: 'non-opaque uniforms outside a block' : not allowed when using GLSL for Vulkan
-1 error generated.";
-			var parser = new ShaderLogParser(input);
-			Assert.AreEqual(2, parser.Lines.Count());
-			Assert.AreEqual(3, parser.Lines.First().LineNumber);
-			Assert.AreEqual(MessageType.Error, parser.Lines.First().Type);
-			Assert.AreEqual(MessageType.Message, parser.Lines.Last().Type);
-		}
-
-		[TestMethod]
-		public void GlslcParsing2()
-		{
-			var input = @"
-C:\work\IrrlichtBAW\branch\examples_tests\42.EnvmapLookup\envCubeMapShaders\envmap.frag:441: error: 'texelFetch' : no matching overloaded function found
-C:\work\IrrlichtBAW\branch\examples_tests\42.EnvmapLookup\envCubeMapShaders\envmap.frag:442: error: '=' :  cannot convert from ' const float' to ' temp highp uint'
-2 errors generated.";
-			var parser = new ShaderLogParser(input);
-			Assert.AreEqual(3, parser.Lines.Count());
-			Assert.AreEqual(441, parser.Lines.First().LineNumber);
-			Assert.AreEqual(442, parser.Lines.ElementAt(1).LineNumber);
-			Assert.AreEqual(MessageType.Error, parser.Lines.ElementAt(1).Type);
-			Assert.AreEqual(MessageType.Message, parser.Lines.Last().Type);
-		}
-
-		[TestMethod]
-		public void GlslcParsing3()
-		{
-			var input = @"C:\work\IrrlichtBAW\branch\examples_tests\42.EnvmapLookup\envCubeMapShaders\envmap.frag:356: error: 'NdotV' : no such field in structure\n
-C:\work\IrrlichtBAW\branch\examples_tests\42.EnvmapLookup\envCubeMapShaders\envmap.frag:356: error: '*' :  wrong operand types: no operation '*' exists that takes a left-hand operand of type ' temp structure{ global structure{ global structure{ global highp 3-component vector of float dir,  global highp 2X3 matrix of float dPosdScreen} V,  global highp 3-component vector of float N,  global highp float NdotV,  global highp float NdotV_squared} isotropic,  global highp 3-component vector of float T,  global highp 3-component vector of float B,  global highp float TdotV,  global highp float BdotV}' and a right operand of type ' temp structure{ global structure{ global structure{ global highp 3-component vector of float dir,  global highp 2X3 matrix of float dPosdScreen} V,  global highp 3-component vector of float N,  global highp float NdotV,  global highp float NdotV_squared} isotropic,  global highp 3-component vector of float T,  global highp 3-component vector of float B,  global highp float TdotV,  global highp float BdotV}' (or there is no acceptable conversion)\n
-C:\work\IrrlichtBAW\branch\examples_tests\42.EnvmapLookup\envCubeMapShaders\envmap.frag:356: error: 'assign' :  cannot convert from ' temp structure{ global structure{ global structure{ global highp 3-component vector of float dir,  global highp 2X3 matrix of float dPosdScreen} V,  global highp 3-component vector of float N,  global highp float NdotV,  global highp float NdotV_squared} isotropic,  global highp 3-component vector of float T,  global highp 3-component vector of float B,  global highp float TdotV,  global highp float BdotV}' to ' global highp float'";
-			var parser = new ShaderLogParser(input);
-			Assert.AreEqual(3, parser.Lines.Count());
-			Assert.AreEqual(356, parser.Lines.First().LineNumber);
-			Assert.AreEqual(356, parser.Lines.ElementAt(1).LineNumber);
-			Assert.AreEqual(356, parser.Lines.ElementAt(2).LineNumber);
-			Assert.AreEqual(MessageType.Error, parser.Lines.ElementAt(1).Type);
 		}
 	}
 }

@@ -13,9 +13,9 @@ namespace GLSLhelper
 		public MessageType Type = MessageType.Message;
 		
 		/// <summary>
-		/// The file number
+		/// The file id
 		/// </summary>
-		public int? FileNumber = null;
+		public string FileId = string.Empty;
 		
 		/// <summary>
 		/// The line number

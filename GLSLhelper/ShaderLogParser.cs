@@ -79,7 +79,8 @@ namespace GLSLhelper
 			{
 				if (!int.TryParse(match.Groups[2].Value, out int lineNumber)) return null;
 				return new ShaderLogLine
-				{ 
+				{
+					FileId = match.Groups[1].Value,
 					LineNumber = lineNumber,
 					Type = ParseType(match.Groups[3].Value),
 					Message = match.Groups[4].Value,
@@ -89,26 +90,28 @@ namespace GLSLhelper
 		}
 
 		//C:\work\IrrlichtBAW\branch\examples_tests\42.EnvmapLookup\envCubeMapShaders\envmap.frag:442: error: '=' :  cannot convert from ' const float' to ' temp highp uint'
-		private static readonly Regex glslcLine = new Regex(@".+:(\d+):\s(\w+):(.+)");
+		private static readonly Regex glslcLine = new Regex(@"(.+):(\d+):\s(\w+):(.+)");
 
 		private static ShaderLogLine ParseGlslc(string line)
 		{
 			var match = glslcLine.Match(line);
-			if (match.Success && 4 == match.Groups.Count)
+			if (match.Success && 5 == match.Groups.Count)
 			{
-				if (!int.TryParse(match.Groups[1].Value, out int lineNumber)) return null;
+				if (!int.TryParse(match.Groups[2].Value, out int lineNumber)) return null;
 				return new ShaderLogLine
 				{
+					FileId = match.Groups[1].Value,
 					LineNumber = lineNumber,
-					Type = ParseType(match.Groups[2].Value),
-					Message = match.Groups[3].Value,
+					Type = ParseType(match.Groups[3].Value),
+					Message = match.Groups[4].Value,
 				};
 			}
 			return null;
 		}
 
 		//ERROR: 0:9: '' :  syntax error, unexpected IDENTIFIER, expecting COMMA or SEMICOLON
-		private static readonly Regex othersLine = new Regex(@"(\w+):\s*(\d+):\s*(\d+):(.+)");
+		//private static readonly Regex othersLine = new Regex(@"(\w+):\s*(\d+):\s*(\d+):(.+)");
+		private static readonly Regex othersLine = new Regex(@"(\w+):\s*(.+):\s*(\d+):(.+)");
 
 		/// <summary>
 		/// Parses the log line.
@@ -121,11 +124,11 @@ namespace GLSLhelper
 			var match = othersLine.Match(line);
 			if (match.Success && 5 == match.Groups.Count)
 			{
-				if (!int.TryParse(match.Groups[2].Value, out int fileNumber)) return null;
+				//if (!int.TryParse(match.Groups[2].Value, out int fileNumber)) return null;
 				if (!int.TryParse(match.Groups[3].Value, out int lineNumber)) return null;
 				return new ShaderLogLine
 				{
-					FileNumber = fileNumber,
+					FileId = match.Groups[2].Value,
 					LineNumber = lineNumber,
 					Type = ParseType(match.Groups[1].Value),
 					Message = match.Groups[4].Value,
