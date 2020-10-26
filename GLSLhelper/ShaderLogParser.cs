@@ -64,7 +64,7 @@ namespace GLSLhelper
 		private readonly List<ShaderLogLine> lines = new List<ShaderLogLine>();
 
 		//filename(10): error C0000: syntax error, unexpected '[', expecting \"::\" at token \"[\"
-		private static readonly Regex nvidiaLine = new Regex(@"(.+)\((\d+)\):\s(\w+)(.+)");
+		private static readonly Regex nvidiaLine = new Regex(@"(.+)\((\d+)\)\s?:\s(\w+)(.+)");
 		
 		/// <summary>
 		/// Parses the log line NVIDIA.

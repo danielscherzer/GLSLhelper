@@ -20,6 +20,7 @@ namespace GLSLhelper.Test
 		[DataRow("\nERROR: 0:9: '' :  syntax error, unexpected IDENTIFIER, expecting COMMA or SEMICOLON", 9, MessageType.Error, "0")]
 		[DataRow("\nWARNING: 0:0987: '' :  syntax error, unexpected IDENTIFIER, expecting COMMA or SEMICOLON", 987, MessageType.Warning, "0")]
 
+		[DataRow("0(22) : error C1036: assignment to const variable color1", 22, MessageType.Error, "0")]
 		[DataRow(shaderFileName1 + "(3): warning C0000: syntax error, unexpected identifier, expecting", 3, MessageType.Warning, shaderFileName1)]
 		[DataRow(shaderFileName1 + "(3): error C0000: syntax error, unexpected identifier, expecting", 3, MessageType.Error, shaderFileName1)]
 		[DataRow(shaderFileName1 + @"(1023): error C1503: undefined variable ""pos""", 1023, MessageType.Error, shaderFileName1)]
