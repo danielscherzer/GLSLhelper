@@ -1,5 +1,7 @@
 version: 0.3.{build}
 
+skip_tags: true # avoid deploy to GitHub loop 
+
 # enable patching of dot net core/standard *.csproj files with APPVEYOR version
 dotnet_csproj:
   patch: true
@@ -30,5 +32,4 @@ deploy:
     secure: otRBFX4rMHEfbtDSVoQDMTXQpUXp5ixCg7MK7OCjaFdVe13V7JI1RyRZZPofesvR
   skip_symbols: false
   artifact: /.*\.nupkg/
-  on:
-    appveyor_repo_tag: true       # deploy on tag push only
+
