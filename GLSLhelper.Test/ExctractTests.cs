@@ -1,18 +1,18 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Linq;
 
-namespace GLSLhelper.Tests
+namespace GLSLhelper.Test
 {
 	[TestClass()]
-	public class ParserTests
+	public class ExctractTests
 	{
 		[DataTestMethod()]
 		[DataRow("float", "test1")]
 		[DataRow("vec2", "_1test")]
 		[DataRow("mat2", "_1test#")]
-		public void ParseUniformsCheckNamings(string type, string name)
+		public void UniformsCheckNamings(string type, string name)
 		{
-			var parser = Parser.ParseUniforms($"uniform {type} {name};");
+			var parser = Extract.Uniforms($"uniform {type} {name};");
 			Assert.AreEqual(type, parser.First().type);
 			Assert.AreEqual(name, parser.First().name);
 		}
@@ -20,9 +20,9 @@ namespace GLSLhelper.Tests
 		[DataTestMethod()]
 		[DataRow("		uniform	float	test1	;", "float", "test1")]
 		[DataRow("		uniform				float test1    ;", "float", "test1")]
-		public void ParseUniformsCheckWhitespaces(string input, string type, string name)
+		public void UniformsCheckWhitespaces(string input, string type, string name)
 		{
-			var parser = Parser.ParseUniforms(input);
+			var parser = Extract.Uniforms(input);
 			Assert.AreEqual(type, parser.First().type);
 			Assert.AreEqual(name, parser.First().name);
 		}

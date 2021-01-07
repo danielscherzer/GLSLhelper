@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 
 namespace GLSLhelper
 {
-	public static class Transformations
+	public static class Transformation
 	{
 		/// <summary>
 		/// Searches for #include statements in the shader code and replaces them by the code in the include resource.

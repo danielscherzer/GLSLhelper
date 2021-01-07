@@ -5,7 +5,7 @@ using System.Linq;
 namespace GLSLhelper.Test
 {
 	[TestClass]
-	public class ShaderLogParserTest
+	public class ShaderLogParserTests
 	{
 		[TestMethod]
 		public void EmptyLog()

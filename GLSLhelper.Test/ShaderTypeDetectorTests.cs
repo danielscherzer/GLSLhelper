@@ -1,7 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using static GLSLhelper.ShaderTypeDetector;
 
-namespace GLSLhelper.Tests
+namespace GLSLhelper.Test
 {
 	[TestClass()]
 	public class ShaderTypeDetectorTests

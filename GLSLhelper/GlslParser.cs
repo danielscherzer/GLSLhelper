@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace GLSLhelper
 {
-	public partial class GlslTokenizer
+	public partial class GlslParser
 	{
 		static readonly Parser<string> NumberWithTrailingDigit = from number in Parse.Number
 																 from trailingDot in Parse.Char('.')
@@ -12,7 +12,7 @@ namespace GLSLhelper
 		static readonly Parser<string> ParserNumber = Parse.DecimalInvariant.Or(NumberWithTrailingDigit);
 		static readonly Parser<string> ParserComment = new CommentParser().AnyComment;
 		static readonly Parser<string> ParserPreprocessor = from first in Parse.Char('#')
-															from rest in Parse.CharExcept('\n').Many().Text()
+															from rest in Parse.LetterOrDigit.Many().Text()
 															select rest;
 		static readonly Parser<string> ParserIdentifier = Parse.Identifier(Parse.Char(GlslSpecification.IsIdentifierStartChar, "Identifier start"),
 																			Parse.Char(GlslSpecification.IsIdentifierChar, "Identifier character"));
@@ -23,7 +23,7 @@ namespace GLSLhelper
 		static readonly Parser<char> ParserOperator = Parse.Chars(GlslSpecification.Operators);
 		private readonly Parser<IEnumerable<Token>> tokenParser;
 
-		public GlslTokenizer()
+		public GlslParser()
 		{
 			var comment = ParserComment.Select(value => new Token(TokenType.Comment, value));
 			var preprocessor = ParserPreprocessor.Select(value => new Token(TokenType.Preprocessor, value));

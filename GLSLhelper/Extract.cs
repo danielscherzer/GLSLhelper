@@ -3,9 +3,9 @@ using System.Text.RegularExpressions;
 
 namespace GLSLhelper
 {
-	public static class Parser
+	public static class Extract
 	{
-		public static IEnumerable<(string type, string name)> ParseUniforms(string uncommentedShaderCode)
+		public static IEnumerable<(string type, string name)> Uniforms(string uncommentedShaderCode)
 		{
 			foreach (Match match in RegexPatterns.Uniform.Matches(uncommentedShaderCode))
 			{
