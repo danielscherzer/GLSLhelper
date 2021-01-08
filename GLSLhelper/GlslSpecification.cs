@@ -6,7 +6,7 @@ namespace GLSLhelper
 	{
 		private static readonly Dictionary<string, TokenType> s_reservedWords = Initialize();
 
-		public const string Operators = "~.;,+-*/()[]{}<>=&$!\"%?:|^";
+		public const string Operators = "~.;,+-*/()[]{}<>=&$!%?:|^\\";
 
 		public static IEnumerable<KeyValuePair<string, TokenType>> ReservedWords => s_reservedWords;
 

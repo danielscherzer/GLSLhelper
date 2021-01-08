@@ -9,6 +9,7 @@
 		Number,
 		Operator,
 		Preprocessor,
-		Variable
+		Variable,
+		QuotedString
 	};
 }

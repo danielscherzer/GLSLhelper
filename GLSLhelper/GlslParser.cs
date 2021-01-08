@@ -11,7 +11,11 @@ namespace GLSLhelper
 																 select number + trailingDot;
 		static readonly Parser<string> ParserNumber = Parse.DecimalInvariant.Or(NumberWithTrailingDigit);
 		static readonly Parser<string> ParserComment = new CommentParser().AnyComment;
-		static readonly Parser<string> ParserPreprocessor = from first in Parse.Char('#')
+		static readonly Parser<string> ParserString = from start in Parse.Char('"')
+													  from text in Parse.CharExcept('"').Many().Text()
+													  from end in Parse.Char('"')
+													  select start + text + end;
+		static readonly Parser<string> ParserPreprocessor = from _ in Parse.Char('#')
 															from rest in Parse.LetterOrDigit.Many().Text()
 															select rest;
 		static readonly Parser<string> ParserIdentifier = Parse.Identifier(Parse.Char(GlslSpecification.IsIdentifierStartChar, "Identifier start"),
@@ -21,16 +25,19 @@ namespace GLSLhelper
 		//												from op in Parse.Char('(')
 		//												select i;
 		static readonly Parser<char> ParserOperator = Parse.Chars(GlslSpecification.Operators);
+
+
 		private readonly Parser<IEnumerable<Token>> tokenParser;
 
 		public GlslParser()
 		{
 			var comment = ParserComment.Select(value => new Token(TokenType.Comment, value));
+			var quotedString = ParserString.Select(value => new Token(TokenType.QuotedString, value));
 			var preprocessor = ParserPreprocessor.Select(value => new Token(TokenType.Preprocessor, value));
 			var number = ParserNumber.Select(value => new Token(TokenType.Number, value));
 			var identifier = ParserIdentifier.Select(value => new Token(GlslSpecification.GetReservedWordType(value), value));
 			var op = ParserOperator.Select(value => new Token(TokenType.Operator, value.ToString()));
-			var token = comment.Or(preprocessor).Or(number).Or(identifier).Or(op);
+			var token = comment.Or(preprocessor).Or(quotedString).Or(number).Or(identifier).Or(op);
 			tokenParser = token.Positioned().Token().XMany();
 		}
 
