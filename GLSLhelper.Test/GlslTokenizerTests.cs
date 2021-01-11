@@ -44,7 +44,10 @@ namespace GLSLhelper.Test
 			yield return new object[] { "1.", TokenType.Number };
 			yield return new object[] { "#warning", TokenType.Preprocessor };
 			yield return new object[] { "gl_FragCoord", TokenType.Variable };
-			foreach(var op in GlslSpecification.Operators)
+			yield return new object[] { "gl_RayFlagsNoneNV", TokenType.Variable };
+			//yield return new object[] { "shadercallcoherent", TokenType.Keyword };
+			//yield return new object[] { "rayQueryGetIntersectionWorldToObjectEXT", TokenType.Function };
+			foreach (var op in GlslSpecification.Operators)
 			{
 				yield return new object[] { op.ToString(), TokenType.Operator };
 			}
