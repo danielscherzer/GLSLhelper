@@ -12,7 +12,9 @@ namespace GLSLhelper.Test
 		public void TokenizeSingleTest(string text, TokenType expectedType)
 		{
 			var tokenizer = new GlslParser();
-			var token = tokenizer.Tokenize(text).First();
+			var tokens = tokenizer.Tokenize(text);
+			Assert.AreEqual(1, tokens.Count());
+			var token = tokens.First();
 			Assert.AreEqual(expectedType, token.Type);
 			Assert.AreEqual(text, text.Substring(token.Start, token.Length));
 		}
