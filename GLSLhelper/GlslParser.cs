@@ -12,8 +12,8 @@ namespace GLSLhelper
 		static readonly Parser<string> ParserNumber = Parse.DecimalInvariant.Or(NumberWithTrailingDigit);
 		static readonly Parser<string> ParserComment = new CommentParser().AnyComment;
 		static readonly Parser<string> ParserString = from start in Parse.Char('"')
-													  from text in Parse.CharExcept('"').Many().Text()
-													  from end in Parse.Char('"')
+													  from text in Parse.CharExcept("\"\r\n").Many().Text()
+													  from end in Parse.Char('"').Optional()
 													  select start + text + end;
 		static readonly Parser<string> ParserPreprocessor = from _ in Parse.Char('#')
 															from rest in Parse.LetterOrDigit.Many().Text()

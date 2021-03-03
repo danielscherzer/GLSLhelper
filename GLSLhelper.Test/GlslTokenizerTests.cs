@@ -59,11 +59,16 @@ namespace GLSLhelper.Test
 			yield return new object[] { "//#include \"test 12.5 \\ / * löä \" //comment", new TokenType[] { TokenType.Comment } };
 			yield return new object[] { "#include \"test 12.5 \\ / * löä \" //comment", new TokenType[] { TokenType.Preprocessor, TokenType.QuotedString, TokenType.Comment } };
 			yield return new object[] { "#include \"test\" //comment", new TokenType[] { TokenType.Preprocessor, TokenType.QuotedString, TokenType.Comment } };
+			yield return new object[] { "#include \"test\n //comment", new TokenType[] { TokenType.Preprocessor, TokenType.QuotedString, TokenType.Comment } };
+			yield return new object[] { "#include \"test\r\n //comment", new TokenType[] { TokenType.Preprocessor, TokenType.QuotedString, TokenType.Comment } };
+			yield return new object[] { "#include \"test\n\"\" //comment", new TokenType[] { TokenType.Preprocessor, TokenType.QuotedString, TokenType.QuotedString, TokenType.Comment } };
 			yield return new object[] { "#version 330\\//comment", new TokenType[] { TokenType.Preprocessor, TokenType.Number, TokenType.Operator, TokenType.Comment } };
 			yield return new object[] { "#version 330 \\	  //comment", new TokenType[] { TokenType.Preprocessor, TokenType.Number, TokenType.Operator, TokenType.Comment } };
 			yield return new object[] { "// comment stuff\n#prepor", new TokenType[] { TokenType.Comment, TokenType.Preprocessor } };
 			yield return new object[] { "#prepor\r\n/* comment stuff uniform float;\n\n*/", new TokenType[] { TokenType.Preprocessor, TokenType.Comment } };
 			yield return new object[] { "#version\n uniform float test", new TokenType[] { TokenType.Preprocessor, TokenType.Keyword, TokenType.Keyword, TokenType.Identifier } };
+			yield return new object[] { "\"", new TokenType[] { TokenType.QuotedString } };
+			yield return new object[] { "R\"(\nvoid main\n)\"", new TokenType[] { TokenType.Identifier, TokenType.QuotedString, TokenType.Keyword, TokenType.Identifier, TokenType.Operator, TokenType.QuotedString } };
 			yield return new object[] { "gl_FragCoord = vec4(1.)", new TokenType[] { TokenType.Variable, TokenType.Operator, TokenType.Keyword, TokenType.Operator, TokenType.Number, TokenType.Operator } };
 		}
 	}
