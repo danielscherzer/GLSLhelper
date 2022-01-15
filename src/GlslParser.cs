@@ -6,25 +6,26 @@ namespace GLSLhelper
 {
 	public partial class GlslParser
 	{
-		static readonly Parser<string> NumberWithTrailingDigit = from number in Parse.Number
+		private static readonly Parser<string> NumberWithTrailingDigit = from number in Parse.Number
 																 from trailingDot in Parse.Char('.')
 																 select number + trailingDot;
-		static readonly Parser<string> ParserNumber = Parse.DecimalInvariant.Or(NumberWithTrailingDigit);
-		static readonly Parser<string> ParserComment = new CommentParser().AnyComment;
-		static readonly Parser<string> ParserString = from start in Parse.Char('"')
+		private static readonly Parser<string> ParserNumber = Parse.DecimalInvariant.Or(NumberWithTrailingDigit);
+		private static readonly Parser<string> ParserComment = new CommentParser().AnyComment;
+		private static readonly Parser<string> ParserString = from start in Parse.Char('"')
 													  from text in Parse.CharExcept("\"\r\n").Many().Text()
 													  from end in Parse.Char('"').Optional()
 													  select start + text + end;
-		static readonly Parser<string> ParserPreprocessor = from _ in Parse.Char('#')
+		private static readonly Parser<string> ParserPreprocessor = from _ in Parse.Char('#')
 															from rest in Parse.LetterOrDigit.Many().Text()
 															select rest;
-		static readonly Parser<string> ParserIdentifier = Parse.Identifier(Parse.Char(GlslSpecification.IsIdentifierStartChar, "Identifier start"),
+		private static readonly Parser<string> ParserIdentifier = Parse.Identifier(Parse.Char(GlslSpecification.IsIdentifierStartChar, "Identifier start"),
 																			Parse.Char(GlslSpecification.IsIdentifierChar, "Identifier character"));
+
 		//static readonly Parser<string> ParserFunction = from i in ParserIdentifier
 		//												from w in Parse.WhiteSpace.Optional()
 		//												from op in Parse.Char('(')
 		//												select i;
-		static readonly Parser<char> ParserOperator = Parse.Chars(GlslSpecification.Operators);
+		private static readonly Parser<char> ParserOperator = Parse.Chars(GlslSpecification.Operators);
 
 
 		private readonly Parser<IEnumerable<Token>> tokenParser;

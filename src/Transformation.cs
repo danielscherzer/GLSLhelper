@@ -24,7 +24,7 @@ namespace GLSLhelper
 			{
 				// Search for include pattern (e.g. #include raycast.glsl) (nested not supported)
 				var match = RegexPatterns.Include.Match(line);
-				if(match.Success)
+				if (match.Success)
 				{
 					var sFullMatch = match.Value;
 					var includeName = match.Groups[1].ToString(); // get the include
@@ -42,7 +42,7 @@ namespace GLSLhelper
 		public static string ReplaceBlockCommentsByEmptyLines(string shaderCode)
 		{
 			int CountLineEndings(string text) => text.Count(c => c == '\n');
-			while(true)
+			while (true)
 			{
 				var match = RegexPatterns.BlockComment.Match(shaderCode);
 				if (match.Success)

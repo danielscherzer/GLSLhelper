@@ -23,7 +23,7 @@ namespace GLSLhelper
 			foreach (var line in lines)
 			{
 				var logLine = ParseLogLineNVIDIA(line);
-				if(logLine is null)
+				if (logLine is null)
 				{
 					logLine = ParseGlslc(line);
 					if (logLine is null)
@@ -65,7 +65,7 @@ namespace GLSLhelper
 
 		//filename(10): error C0000: syntax error, unexpected '[', expecting \"::\" at token \"[\"
 		private static readonly Regex nvidiaLine = new Regex(@"(.+)\((\d+)\)\s?:\s(\w+)(.+)");
-		
+
 		/// <summary>
 		/// Parses the log line NVIDIA.
 		/// </summary>
@@ -75,7 +75,7 @@ namespace GLSLhelper
 		private static ShaderLogLine ParseLogLineNVIDIA(string line)
 		{
 			var match = nvidiaLine.Match(line);
-			if(match.Success && 5 == match.Groups.Count)
+			if (match.Success && 5 == match.Groups.Count)
 			{
 				if (!int.TryParse(match.Groups[2].Value, out int lineNumber)) return null;
 				return new ShaderLogLine
@@ -144,9 +144,9 @@ namespace GLSLhelper
 		/// <returns></returns>
 		private static MessageType ParseType(string typeString)
 		{
-			if(0 == typeString.Length) return MessageType.Message;
+			if (0 == typeString.Length) return MessageType.Message;
 			typeString = char.ToUpper(typeString[0]) + typeString.Substring(1).ToLowerInvariant().Trim();
-			if(Enum.TryParse<MessageType>(typeString, out var value))
+			if (Enum.TryParse<MessageType>(typeString, out var value))
 			{
 				return value;
 			}

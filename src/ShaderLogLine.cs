@@ -11,22 +11,22 @@ namespace GLSLhelper
 		/// The type
 		/// </summary>
 		public MessageType Type = MessageType.Message;
-		
+
 		/// <summary>
 		/// The file id
 		/// </summary>
 		public string FileId = string.Empty;
-		
+
 		/// <summary>
 		/// The line number
 		/// </summary>
 		public int? LineNumber = null;
-		
+
 		/// <summary>
 		/// The message
 		/// </summary>
 		public string Message = string.Empty;
-		
+
 		/// <summary>
 		/// Returns a <see cref="string" /> that represents this instance.
 		/// </summary>
