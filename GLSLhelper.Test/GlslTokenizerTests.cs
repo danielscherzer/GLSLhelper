@@ -55,6 +55,7 @@ namespace GLSLhelper.Test
 
 		private static IEnumerable<object[]> GetTokensData()
 		{
+			yield return new object[] { "#define @hallo", new TokenType[] { TokenType.Preprocessor, TokenType.Identifier} };
 			yield return new object[] { "//#include \"test 12.5 \\ / * löä \"\n //comment", new TokenType[] { TokenType.Comment, TokenType.Comment } };
 			yield return new object[] { "//#include \"test 12.5 \\ / * löä \" //comment", new TokenType[] { TokenType.Comment } };
 			yield return new object[] { "#include \"test 12.5 \\ / * löä \" //comment", new TokenType[] { TokenType.Preprocessor, TokenType.QuotedString, TokenType.Comment } };

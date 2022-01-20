@@ -16,9 +16,9 @@ namespace GLSLhelper
 			return TokenType.Identifier;
 		}
 
-		public static bool IsIdentifierChar(char c) => char.IsLetterOrDigit(c) || '_' == c;
+		public static bool IsIdentifierChar(char c) => char.IsDigit(c) || IsIdentifierStartChar(c);
 
-		public static bool IsIdentifierStartChar(char c) => char.IsLetter(c) || '_' == c;
+		public static bool IsIdentifierStartChar(char c) => char.IsLetter(c) || '_' == c || '@' == c;
 
 		private static void AddRange(this Dictionary<string, TokenType> result, IEnumerable<string> words, TokenType type)
 		{
