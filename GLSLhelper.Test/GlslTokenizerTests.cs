@@ -47,6 +47,7 @@ namespace GLSLhelper.Test
 			yield return new object[] { "gl_RayTmaxEXT", TokenType.Variable };
 			yield return new object[] { "shadercallcoherent", TokenType.Keyword };
 			yield return new object[] { "rayQueryGetIntersectionWorldToObjectEXT", TokenType.Function };
+			yield return new object[] { "u16vec4", TokenType.Keyword };
 			foreach (var op in GlslSpecification.Operators)
 			{
 				yield return new object[] { op.ToString(), TokenType.Operator };
