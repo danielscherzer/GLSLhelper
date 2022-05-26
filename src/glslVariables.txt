@@ -87,10 +87,10 @@ gl_RayQueryCandidateIntersectionTriangleEXT
 gl_RayQueryCandidateIntersectionAABBEXT
 
 
-gl_LaunchIDEXT
-gl_LaunchSizeEX
 gl_PrimitiveID
 gl_InstanceID
+gl_LaunchIDEXT
+gl_LaunchSizeEXT
 gl_InstanceCustomIndexEXT
 gl_GeometryIndexEXT
 gl_WorldRayOriginEXT
