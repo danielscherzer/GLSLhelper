@@ -5,7 +5,7 @@ namespace GLSLhelper
 	/// <summary>
 	/// Contains a parsed shader log line
 	/// </summary>
-	public partial class ShaderLogLine
+	public class ShaderLogLine
 	{
 		/// <summary>
 		/// The type
