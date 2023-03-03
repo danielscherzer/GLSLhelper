@@ -119,6 +119,8 @@ gl_RayFlagsCullNoOpaqueEXT
 
 gl_HitKindFrontFacingTriangleEXT
 gl_HitKindBackFacingTriangleEXT
+gl_NumSubgroups
+gl_SubgroupID
 gl_SubgroupSize
 gl_SubgroupInvocationID
 gl_SubgroupEqMask
