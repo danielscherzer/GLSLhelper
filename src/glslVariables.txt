@@ -119,6 +119,8 @@ gl_RayFlagsCullNoOpaqueEXT
 
 gl_HitKindFrontFacingTriangleEXT
 gl_HitKindBackFacingTriangleEXT
+gl_NumSubgroups
+gl_SubgroupID
 gl_SubgroupSize
 gl_SubgroupInvocationID
 gl_SubgroupEqMask
@@ -129,3 +131,22 @@ gl_SubgroupLtMask
 gl_WarpIDNV
 gl_SMIDNV
 gl_RayTmaxEXT
+
+gl_ScopeDevice      
+gl_ScopeWorkgroup   
+gl_ScopeSubgroup    
+gl_ScopeInvocation  
+gl_ScopeQueueFamily 
+gl_SemanticsRelaxed
+gl_SemanticsAcquire
+gl_SemanticsRelease
+gl_SemanticsAcquireRelease
+gl_SemanticsMakeAvailable
+gl_SemanticsMakeVisible
+gl_SemanticsVolatile
+gl_StorageSemanticsNone
+gl_StorageSemanticsBuffer
+gl_StorageSemanticsShared
+gl_StorageSemanticsImage
+gl_StorageSemanticsOutput
+ 
