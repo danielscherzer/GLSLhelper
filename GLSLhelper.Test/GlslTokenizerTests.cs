@@ -48,6 +48,7 @@ namespace GLSLhelper.Test
 			yield return new object[] { "shadercallcoherent", TokenType.Keyword };
 			yield return new object[] { "rayQueryGetIntersectionWorldToObjectEXT", TokenType.Function };
 			yield return new object[] { "u16vec4", TokenType.Keyword };
+			yield return new object[] { "f16mat4x3", TokenType.Keyword };
 			foreach (var op in GlslSpecification.Operators)
 			{
 				yield return new object[] { op.ToString(), TokenType.Operator };
