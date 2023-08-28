@@ -49,6 +49,11 @@ namespace GLSLhelper.Test
 			yield return new object[] { "rayQueryGetIntersectionWorldToObjectEXT", TokenType.Function };
 			yield return new object[] { "u16vec4", TokenType.Keyword };
 			yield return new object[] { "f16mat4x3", TokenType.Keyword };
+			yield return new object[] { "float16_t", TokenType.Keyword };
+			yield return new object[] { "float32_t", TokenType.Keyword };
+			yield return new object[] { "f32mat4x4", TokenType.Keyword };
+			yield return new object[] { "float64_t", TokenType.Keyword };
+			yield return new object[] { "u8vec4", TokenType.Keyword };
 			foreach (var op in GlslSpecification.Operators)
 			{
 				yield return new object[] { op.ToString(), TokenType.Operator };

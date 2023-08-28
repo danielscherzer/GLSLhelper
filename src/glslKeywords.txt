@@ -1,4 +1,4 @@
-attribute const
+﻿attribute const
 uniform varying buffer shared
 coherent volatile restrict readonly writeonly
 atomic_uint
@@ -104,6 +104,14 @@ executeCallableEXT
 shadercallcoherent
 accelerationStructureEXT
 
+devicecoherent queuefamilycoherent workgroupcoherent subgroupcoherent nonprivate
+
+float64_t f64vec2 f64vec3 f64vec4
+f64mat2 f64mat3 f64mat4
+f64mat2x2 f64mat2x3 f64mat2x4
+f64mat3x2 f64mat3x3 f64mat3x4
+f64mat4x2 f64mat4x3 f64mat4x4
+
 float32_t f32vec2 f32vec3 f32vec4
 f32mat2 f32mat3 f32mat4
 f32mat2x2 f32mat2x3 f32mat2x4
@@ -127,5 +135,3 @@ uint16_t u16vec2 u16vec3 u16vec4
 
 int8_t i8vec2 i8vec3 i8vec4
 uint8_t u8vec2 u8vec3 u8vec4
-
-devicecoherent queuefamilycoherent workgroupcoherent subgroupcoherent nonprivate 
