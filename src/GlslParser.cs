@@ -7,17 +7,17 @@ namespace GLSLhelper
 	public partial class GlslParser
 	{
 		private static readonly Parser<string> NumberWithTrailingDigit = from number in Parse.Number
-																 from trailingDot in Parse.Char('.')
-																 select number + trailingDot;
+																		 from trailingDot in Parse.Char('.')
+																		 select number + trailingDot;
 		private static readonly Parser<string> ParserNumber = Parse.DecimalInvariant.Or(NumberWithTrailingDigit);
 		private static readonly Parser<string> ParserComment = new CommentParser().AnyComment;
 		private static readonly Parser<string> ParserString = from start in Parse.Char('"')
-													  from text in Parse.CharExcept("\"\r\n").Many().Text()
-													  from end in Parse.Char('"').Optional()
-													  select start + text + end;
+															  from text in Parse.CharExcept("\"\r\n").Many().Text()
+															  from end in Parse.Char('"').Optional()
+															  select start + text + end;
 		private static readonly Parser<string> ParserPreprocessor = from _ in Parse.Char('#')
-															from rest in Parse.LetterOrDigit.Many().Text()
-															select rest;
+																	from rest in Parse.LetterOrDigit.Many().Text()
+																	select rest;
 		private static readonly Parser<string> ParserIdentifier = Parse.Identifier(Parse.Char(GlslSpecification.IsIdentifierStartChar, "Identifier start"),
 																			Parse.Char(GlslSpecification.IsIdentifierChar, "Identifier character"));
 

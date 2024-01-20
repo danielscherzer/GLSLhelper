@@ -15,7 +15,7 @@ namespace GLSLhelper.Test
 			Assert.IsTrue(parser.Lines.Count() == 0);
 		}
 
-		const string shaderFileName1 = @"D:\C#\02 - Content\shader.vert";
+		private const string shaderFileName1 = @"D:\C#\02 - Content\shader.vert";
 		[DataTestMethod()]
 		[DataRow("\nERROR: 0:9: '' :  syntax error, unexpected IDENTIFIER, expecting COMMA or SEMICOLON", 9, MessageType.Error, "0")]
 		[DataRow("\nWARNING: 0:0987: '' :  syntax error, unexpected IDENTIFIER, expecting COMMA or SEMICOLON", 987, MessageType.Warning, "0")]
