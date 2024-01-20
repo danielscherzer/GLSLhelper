@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -16,25 +17,40 @@ namespace GLSLhelper
 		public static string ExpandIncludes(string shaderCode, Func<string, string> GetIncludeCode)
 		{
 			if (GetIncludeCode == null) throw new ArgumentNullException(nameof(GetIncludeCode));
+            
+			var foundIncludes = new List<string>();
+            int prevAmountOfIncludes;
+            do
+            {
+                prevAmountOfIncludes = foundIncludes.Count;
+                shaderCode = RemoveComments(UnixLineEndings(shaderCode));
+                var lines = shaderCode.Split(new[] { '\n' }, StringSplitOptions.None); //if UNIX style line endings still working so do not use Envirnoment.NewLine
+                int lineNr = 1;
+                foreach (var line in lines)
+                {
+                    // Search for include pattern (e.g. #include raycast.glsl)
+                    var match = RegexPatterns.Include.Match(line);
+                    if (match.Success)
+                    {
+                        var sFullMatch = match.Value;
+                        var includeName = match.Groups[1].ToString(); // get the include
+                        // Check for cyclic inclusion
+                        if (foundIncludes.Contains(includeName))
+                        {
+                            shaderCode = shaderCode.Replace(sFullMatch, string.Empty);
+                            continue;
+                        }
 
-			shaderCode = RemoveComments(UnixLineEndings(shaderCode));
-			var lines = shaderCode.Split(new[] { '\n' }, StringSplitOptions.None); //if UNIX style line endings still working so do not use Envirnoment.NewLine
-			int lineNr = 1;
-			foreach (var line in lines)
-			{
-				// Search for include pattern (e.g. #include raycast.glsl) (nested not supported)
-				var match = RegexPatterns.Include.Match(line);
-				if (match.Success)
-				{
-					var sFullMatch = match.Value;
-					var includeName = match.Groups[1].ToString(); // get the include
-					var includeCode = GetIncludeCode(includeName);
-					var lineNumberCorrection = $"\n#line {lineNr}\n";
-					shaderCode = shaderCode.Replace(sFullMatch, includeCode + lineNumberCorrection); // replace #include with actual include code
-				}
-				++lineNr;
-			}
-			return shaderCode;
+                        var lineNumberCorrection = $"\n#line {lineNr}\n";
+                        var includeCode = GetIncludeCode(includeName);
+                        shaderCode = shaderCode.Replace(sFullMatch, includeCode + lineNumberCorrection); // replace #include with actual include code
+                        foundIncludes.Add(includeName);
+                    }
+                    ++lineNr;
+                }
+            } while (prevAmountOfIncludes != foundIncludes.Count);
+
+            return shaderCode;
 		}
 
 		public static string UnixLineEndings(string shaderCode) => shaderCode.Replace("\r\n", "\n");

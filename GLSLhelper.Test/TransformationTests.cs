@@ -118,6 +118,20 @@ uniform vec2 iResolution; ");
 		}
 
 		[TestMethod]
+		public void ExpandNestedIncludes()
+		{
+            var input = @"#version 330
+#include ""../ libs / camera.glsl""
+#include ""../libs/hg_sdf.glsl""
+#include ""../libs/operators.glsl""
+uniform vec2 iResolution; ";
+
+			int count = 0;
+            var actual = Transformation.ExpandIncludes(input, include => { ++count; return "#include \"../libs/nested.glsl\""; });
+			Assert.AreEqual(4, count);
+        }
+
+		[TestMethod]
 		public void ExpandIncludesInComment()
 		{
 			var input = @"#version 330
